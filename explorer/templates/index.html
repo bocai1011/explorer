@@ -1,38 +1,35 @@
 {% load static %}
 <html>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
     <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
     <style>
-        div.middle {
-            width:110px;
-            height:87px;
-            background-image:url("{% static 'folder.jpg' %}");
+        div.folder {
+            width:128px;
+            height:128px;
+            background-image:url("{% static 'folder.png' %}");
             overflow:hidden;
             display:inline-block;
         }
+        div.file {
+            width:128px;
+            height:128px;
+            background-image:url("{% static 'file.png' %}");
+            overflow:hidden;
+            display:inline-block;
+            cursor: pointer;
+        }
+        .inline {
+            margin-top: 60px;
+            display: inline-block;
+        }
     </style>
-    <script>
-        var app=angular.module("app",[]);
-        app.controller("ctrl",function($scope,$http){
-            $http.get('/api/get/').then(function(res){
-                $scope.files = res.data;
-            });
-            $scope.getdata = function(i){
-                var url = '/api/get/';
-                var data = {
-                    params:{path:'/c/users/bo/'},
-                }
-                $http.get(url,data).then(function(res){
-                    $scope.files = res.data;
-                });
-            }
-        });
-    </script>
-    <body ng-app="app" ng-controller="ctrl">
-        <div >
-            <div class="w3-margin middle" ng-repeat="f in files">
-                {% verbatim %} {{ f }} {% endverbatim %}
-            </div>
+    <body >
+        <div class="container">
+            {% for d in ds %}
+            <div class="w3-margin folder w3-center"><a class="inline" href="/?p={{d.path}}">{{ d.name }}</a></div>
+            {% endfor %}
+            {% for f in fs %}
+            <div class="w3-margin file w3-center"><span class="inline">{{ f.name }}</span></div>
+            {% endfor %}
         </div>
     </body>
 </html>
