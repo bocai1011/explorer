@@ -1,35 +1,39 @@
 {% load static %}
 <html>
+    <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
     <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
     <style>
-        div.folder {
-            width:128px;
-            height:128px;
-            background-image:url("{% static 'folder.png' %}");
-            overflow:hidden;
-            display:inline-block;
-        }
-        div.file {
-            width:128px;
-            height:128px;
-            background-image:url("{% static 'file.png' %}");
-            overflow:hidden;
+        div.object {
+            width:80px;
+            height:80px;
             display:inline-block;
             cursor: pointer;
         }
-        .inline {
-            margin-top: 60px;
-            display: inline-block;
-        }
     </style>
-    <body >
+    
+    <script>
+        var app=angular.module("app",[]);
+        app.controller('ctrl',function($scope,$http){
+            $http.get('/api/get/').then(function(res){
+                $scope.objs = res.data;
+            });
+            $scope.myfunc = function(id){
+                var config = {
+                    params : { p : $scope.objs[id].path }
+                }
+                $http.get('/api/get/',config).then(function(res){
+                    $scope.objs = res.data;
+                });
+            
+            }; 
+            
+        });
+    </script>
+    </head>
+    <body ng-app="app" ng-controller="ctrl">
         <div class="container">
-            {% for d in ds %}
-            <div class="w3-margin folder w3-center"><a class="inline" href="/?p={{d.path}}">{{ d.name }}</a></div>
-            {% endfor %}
-            {% for f in fs %}
-            <div class="w3-margin file w3-center"><span class="inline">{{ f.name }}</span></div>
-            {% endfor %}
+            <div class="w3-btn w3-margin w3-round-xlarge w3-{% verbatim %}{{ obj.color }}{% endverbatim %} object" ng-repeat="obj in objs" ng-click="myfunc($index)">{% verbatim %}{{ obj.name }}{% endverbatim %}</div>
         </div>
     </body>
 </html>
